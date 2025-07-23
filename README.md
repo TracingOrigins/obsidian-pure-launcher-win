@@ -8,83 +8,93 @@ A small tool to optimize the Obsidian launch experience by automatically fixing 
 
 ## Features
 
-- Automatically fixes redundant strings (removes `,"open":true`) in `%APPDATA%\obsidian\obsidian.json`.
+- Automatically cleans redundant strings (removes `,"open":true`) from `%APPDATA%\obsidian\obsidian.json`.
 - Automatically detects and launches the locally installed Obsidian client.
-- Supports one-click packaging into a single EXE file for Windows.
-
-## Requirements
-
-### For Direct Usage (Method 1)
-- Windows OS
-- No additional dependencies required
-
-### For Building EXE (Method 2)
-- Windows OS
-- Python 3.7 or above
-- pip
-- pyinstaller (will be installed automatically on first build)
+- Supports one-click packaging into a single EXE file on Windows.
 
 ## Project Structure
 
-```
+```plaintext
 obsidian-pure-launcher-win/
-├── assets/                    # Resource files
-│   └── app-icon.ico          # Application icon
-├── build/                    # Temporary build directory (auto-generated, auto-cleaned after build)
-├── dist/                     # Output directory for packaged EXE (auto-generated)
+├── assets/
+│   └── app-icon.ico
+├── dist/
+│   └── ... (packaged executables)
+├── scripts/
+│   ├── obsidian.bat
+│   ├── obsidian.log.vbs
+│   ├── obsidian.vbs
+│   ├── start_obsidian.bat
+│   ├── start_obsidian_console.bat
+│   ├── start_obsidian.vbs
+│   └── start_obsidian_console.vbs
 ├── src/
-│   ├── main.py               # Main program entry
-│   ├── registry_utils.py     # Registry utilities
-│   └── build.bat             # One-click build script
-├── start_obsidian.bat        # Direct launcher (silent mode, no Python required)
-├── start_obsidian_console.bat # Direct launcher (console mode, no Python required)
-├── README.md                 # Project documentation (English)
-└── README.zh.md              # Project documentation (Chinese)
+│   ├── build.bat
+│   ├── main.py
+│   └── registry_utils.py
+├── README.md
+├── README.zh.md
 ```
 
-## Usage Methods
+- `assets/`: Resource files (icons, etc.)
+- `dist/`: Output directory for packaged executables
+- `scripts/`: All batch and VBS scripts for launching and processing
+- `src/`: Python source code and build scripts
+- `README.md`, `README.zh.md`: Project documentation (English/Chinese)
 
-This project provides two usage methods to launch Obsidian:
+## Launch Methods
 
-### Method 1: Direct Usage (No Python Required)
+This project supports three ways to launch Obsidian:
 
-**Recommended for most users** - No Python installation required.
+### Method 1: Launch via EXE
 
-#### Quick Start
-- **Silent Mode**: Double-click `start_obsidian.bat` to launch Obsidian directly without console output.
-- **Console Mode**: Double-click `start_obsidian_console.bat` to launch with detailed console output for debugging.
+This method requires a pre-installed Python environment and is suitable for developers or users who want a single executable.
 
-Both methods will:
-- Automatically fix the Obsidian configuration file (`%APPDATA%\obsidian\obsidian.json`)
-- Detect and launch the locally installed Obsidian client
+#### Build Requirements
 
-#### Supported Installation Paths
-- `%LOCALAPPDATA%\Obsidian\Obsidian.exe` (User installation)
-- `%PROGRAMFILES%\Obsidian\Obsidian.exe` (System installation)
-- `%PROGRAMFILES(X86)%\Obsidian\Obsidian.exe` (32-bit installation)
-- `%PROGRAMW6432%\Obsidian\Obsidian.exe` (64-bit installation)
-- Any path where `obsidian.exe` is in system PATH
-
-### Method 2: Build EXE (Python Required)
-
-For developers or users who prefer a single executable file.
-
-#### Requirements for Building
 - Windows OS
-- Python 3.7 or above
+- Python 3.7 or higher
 - pip
-- pyinstaller (will be installed automatically on first build)
+- pyinstaller (auto-installed on first build)
 
-#### Build Instructions
-1. Make sure Python 3 and pip are installed (check with `python --version` and `pip --version`).
-2. Go to the `src` directory and run `.\build.bat` by double-clicking or from the command line.
-3. On first build, pyinstaller will be installed automatically. The script will then restart and continue building, no manual steps required.
-4. After building, the EXE file will be output to the `dist` directory.
+#### Build Steps
 
-#### Using the Built EXE
+1. Ensure Python 3 and pip are installed (`python --version` and `pip --version`).
+2. Go to the `src` directory and run `build.bat` (double-click or via command line).
+3. The script will auto-install pyinstaller if needed, and continue building after installation.
+4. The packaged EXE will be output to the `dist` directory.
+
+#### Using the Packaged EXE
+
 1. Run the generated `obsidian-pure-launcher.exe` (Windows only).
-2. The program will automatically fix the Obsidian configuration file and attempt to launch the Obsidian client.
-3. If Obsidian is not detected, please check if it is installed at one of the supported paths listed above.
+2. The program will automatically clean the Obsidian config and attempt to launch the Obsidian client.
+3. If Obsidian does not launch, check if it is installed in one of the following supported paths:
+   - `%LOCALAPPDATA%\Obsidian\Obsidian.exe` (user install)
+   - `%PROGRAMFILES%\Obsidian\Obsidian.exe` (system install)
+   - `%PROGRAMFILES(X86)%\Obsidian\Obsidian.exe` (32-bit install)
+   - `%PROGRAMW6432%\Obsidian\Obsidian.exe` (64-bit install)
+   - Any path in the system PATH containing `obsidian.exe`
+
+### Method 2: Launch via BAT File
+
+- **Silent mode**: Double-click `start_obsidian.bat` to launch Obsidian without console output.
+- **Console mode**: Double-click `start_obsidian_console.bat` to launch with detailed console output for debugging.
+
+**Supported install paths:**
+
+- `%LOCALAPPDATA%\Obsidian\Obsidian.exe` (user install)
+- `%PROGRAMFILES%\Obsidian\Obsidian.exe` (system install)
+- `%PROGRAMFILES(X86)%\Obsidian\Obsidian.exe` (32-bit install)
+- `%PROGRAMW6432%\Obsidian\Obsidian.exe` (64-bit install)
+- Any path in the system PATH containing `obsidian.exe`
+
+### Method 3: Launch via VBS File (Recommended/Best Practice)
+
+Place `Obsidian.vbs` in the same directory as `Obsidian.exe`, then point the `Obsidian.lnk` (shortcut) target to this VBS file.
+
+Alternatively, you can create a separate shortcut for the VBS file and set its icon to `Obsidian.exe` for a seamless experience.
+
+This approach allows for silent config processing and automatic launch of Obsidian, with maximum compatibility and no need to search for the executable path.
 
 ## Contributing
 
